@@ -13,16 +13,9 @@ invalid_creds = credentials["invalid_credentials"]
 valid_creds = credentials["valid_credentials"]
 
 
-# Test Login Válido (smoke)
-# def test_login_success(log_in_success):
-#     try:
-#         assert not log_in_success.login_is_displayed()
-#         assert "Home - Taiga" in log_in_success.page.title()
-#         logger.info(f"Log in con credenciales validas exitoso")
-#     except Exception:
-#         log_in_success.screenshot(path=screenshot_path(f"login_happy_path_fail"))
-#         logger.error(f"Fallo en credenciales validas ")
-#         raise
+@pytest.mark.functional
+@pytest.mark.smoke
+@pytest.mark.regression
 @pytest.mark.parametrize("cred", valid_creds)
 def test_login_valid_credentials(login_page, cred, base_url):
     login_page.navigate(base_url)
@@ -41,7 +34,11 @@ def test_login_valid_credentials(login_page, cred, base_url):
         logger.error(f"Fallo en log in con credenciales validas ")
         raise
 
+
 # Parametrizar con todos los casos invalid_credentials
+@pytest.mark.functional
+@pytest.mark.negative
+@pytest.mark.regression
 @pytest.mark.parametrize("cred", invalid_creds)
 def test_login_invalid_credentials(login_page, cred, base_url):
     login_page.navigate(base_url)
@@ -56,6 +53,9 @@ def test_login_invalid_credentials(login_page, cred, base_url):
         raise
 
 # Test Login edge cases (campos vacíos)
+@pytest.mark.functional
+@pytest.mark.negative
+@pytest.mark.regression
 @pytest.mark.parametrize("user", ["edge_cases"])
 def test_login_edge_cases(login_page, credentials, user, base_url):
     for cred in credentials[user]:

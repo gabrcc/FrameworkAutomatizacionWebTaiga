@@ -1,9 +1,10 @@
 import json
 import pytest
+import logging
 from utils.helpers import screenshot_path
 from utils.logger import setup_logger
 
-logger = setup_logger("test_login", log_file="test_login.log")
+logger = setup_logger("test_log.log", level=logging.INFO) 
 
 
 # Cargar credenciales
@@ -47,9 +48,12 @@ def test_login_invalid_credentials(login_page, cred, base_url):
 
     try:
         assert login_page.view_error_message(), f"Error no mostrado para {cred['description']}, \n user/email: {cred['username']}\n password: {cred['password']}"
+        logger.info(f"Log in con credenciales invalidas denegado")
+    
     except AssertionError:
         path = screenshot_path(f"login_invalid_{cred['description']}")
         login_page.page.screenshot(path=path)
+        logger.error(f"Log in con credenciales invalidas procedio")
         raise
 
 # Test Login edge cases (campos vacíos)
@@ -74,7 +78,10 @@ def test_login_edge_cases(login_page, credentials, user, base_url):
             password_invalid = login_page.page.locator(login_page.password_input).evaluate("el => !el.checkValidity()")
             assert username_invalid or password_invalid, "Los campos vacíos deberían ser inválidos"
 
+            logger.info(f"Log in con credenciales invalidas denegado")
+        
         except AssertionError:
-            path = screenshot_path(f"login_edge_{cred['description'].replace(' ', '_')}")
-            login_page.page.screenshot(path=path)
-            raise
+                path = screenshot_path(f"login_edge_{cred['description'].replace(' ', '_')}")
+                login_page.page.screenshot(path=path)
+                logger.error(f"Log in con credenciales vacias procedio")
+                raise

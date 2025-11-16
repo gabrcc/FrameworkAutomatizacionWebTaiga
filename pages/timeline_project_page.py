@@ -10,8 +10,35 @@ class TimeLineProjectPage(BasePage):
         super().__init__(page)
         self.projects_button = "a.dropdown-project-list-projects[title='Projects']"
         self.view_all_projects_option = 'a.see-more-projects-btn[tg-nav="projects"]' 
-
+        self.settings_link = page.locator("use[href='#settings']")
+        self.delete_project_link = page.locator("a.delete-project[title='Delete this project']")
+        self.close_cookie_btn = page.locator("cookie-warning a.close")
+        self.confirm_delete_button = page.locator("button.btn-confirm.js-confirm",has_text="Yes, I'm really sure")
+        
     def go_to_projects(self):
         self.click(self.projects_button)
         self.click(self.view_all_projects_option)
 
+    def delete_project(self, project_name: str):
+        """Elimina un proyecto por su nombre desde la lista de Projects"""
+        if self.close_cookie_btn.is_visible():
+            self.close_cookie_warning()
+            
+        try:
+            self.settings_link.wait_for(state="visible", timeout=10000)
+            self.settings_link.click()
+            self.delete_project_link.wait_for(state="visible", timeout=10000)
+            self.delete_project_link.click()
+            logger.info(f"Click en boton delete del proyecto {project_name}")
+        except Exception as e:
+            logger.error(f"No se pudo eliminar el proyecto '{project_name}': {e}")
+            raise
+
+    def confirm_delete(self):
+        """Confirma la eliminación de un proyecto"""
+        try:
+            self.confirm_delete_button.click()
+            logger.info("Confirmar eliminar de proyecto")
+        except Exception as e:
+            logger.error(f"No se pudo confirmar la eliminación del proyecto: {e}")
+            raise

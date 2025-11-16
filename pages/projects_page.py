@@ -17,6 +17,7 @@ class ProjectsPage(BasePage):
         self.project_description = page.locator("div.home-project.tg-scope p.project-card-description")
         self.project_list_locator = page.locator("li.list-itemtype-project")  # Cada proyecto
         self.project_list_container = page.locator("div.project-list")     # Contenedor scrollable
+        self.projects_button = page.locator("a.dropdown-project-list-projects[title='Projects']")
         self.create_your_first_project = page.locator("div[ng-if='!vm.projects.size'] h2:text('Create your first project')")
         self.view_all_projects_option = page.locator('a.see-more-projects-btn[tg-nav="projects"]') #'a.see-more-projects-btn[title="View all projects"]'
 
@@ -35,7 +36,7 @@ class ProjectsPage(BasePage):
             
     def get_project_names(self):
         """Lista de nombres de proyectos"""
-        logger.info(f"   Proyectos:{self.project_title_link.all_inner_texts()}")
+        # logger.info(f"   Proyectos:{self.project_title_link.all_inner_texts()}")
         return self.project_title_link.all_inner_texts()
     
     def wait_for_project(self, project_name: str, timeout: int = 10000):
@@ -48,3 +49,33 @@ class ProjectsPage(BasePage):
         except Exception as e:
             logger.error(f"El proyecto '{project_name}' no apareció: {e}")
             raise
+
+    def click_project(self, project_name: str):
+        """
+        Entra al timeline del proyecto usando el link correcto.
+        """
+
+        # self.page.wait_for_load_state("domcontentloaded")
+        try:
+            self.page.wait_for_selector(f"{self.project_image_link}[title='{project_name}']", timeout=10000)
+            locator = self.page.locator(f"{self.project_image_link}[title='{project_name}']").first
+            locator.wait_for(state="visible", timeout=10000)
+            expect(locator).to_be_enabled(timeout=10000)
+            # time.sleep(2)
+            locator.click(force=True)
+            locator.click()
+            self.page.wait_for_load_state("networkidle")
+        except Exception as e:
+            logger.error(f"No se pudo abrir el timeline del proyecto '{project_name}': {e}")
+            raise
+
+    def hover_projects_button(self):
+        self.projects_button.hover()
+
+    def is_first_project_message_visible(self, timeout=3000):
+        locator = self.create_your_first_project
+        try:
+            locator.wait_for(state="visible", timeout=timeout)
+            return locator.is_visible()
+        except:
+            return False

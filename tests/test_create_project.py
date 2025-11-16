@@ -7,7 +7,7 @@ logger = setup_logger("test_dashboard.log", level=20)  # INFO
 
 @pytest.mark.functional
 @pytest.mark.regression
-def test_create_n_projects(projects_page, create_projects,n=3):
+def test_create_n_projects(projects_page, create_projects,n=7):
     """
     Test para crear N proyectos usando el fixture `create_projects`
     y verificar que aparecen en la lista del Dashboard.

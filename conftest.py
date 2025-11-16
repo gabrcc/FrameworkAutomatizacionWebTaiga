@@ -112,29 +112,26 @@ def create_projects(projects_page,page):
 
     return _create_projects
 
+@pytest.fixture
+def delete_all_projects(projects_page, page):
+    """
+    Fixture que devuelve una función para eliminar todos los proyectos visibles.
+    """
+    projects = projects_page
+    timeline = TimeLineProjectPage(page)
 
-# @pytest.fixture
-# def delete_all_projects(dashboard_page, page):
-#     """
-#     Fixture que devuelve una función para eliminar todos los proyectos visibles.
-#     """
-#     timeline = TimeLineProjectPage(page)
-#     projects = ProjectsPage(page)
+    def _delete_all():
+        project_names = projects.get_project_names()
 
-#     def _delete_all():
-#         # dashboard_page.go_to_projects()
-#         project_names = projects.get_project_names()
+        for name in project_names:
+            projects.click_project(name)  
+            timeline.delete_project(name)  
+            timeline.confirm_delete()
+            time.sleep(2)
+            projects.go_to_projects()
 
-#         for name in project_names:
-#             project_names = projects.get_project_names()
-#             projects.click_project(name)  
-#             timeline.delete_project(name)  
-#             timeline.confirm_delete()
-#             dashboard_page.go_to_projects()
-#             projects.click_view_all_projects()
+        time.sleep(3)
+        projects.hover_projects_button()
+        logger.info("Se eliminaron todos los proyectos")
 
-#         time.sleep(3)
-#         projects.first_proyect_option()
-#         logger.info("Se eliminaron todos los proyectos")
-
-#     return _delete_all
+    return _delete_all

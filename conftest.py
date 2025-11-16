@@ -1,4 +1,5 @@
 import json
+import time
 import pytest
 from playwright.sync_api import sync_playwright
 from pages.login_page import LoginPage
@@ -63,20 +64,24 @@ def dashboard_page(log_in_success):
     """Devuelve la página de dashboard con sesión iniciada."""
     return DashboardPage(log_in_success.page)
 
+@pytest.fixture()
+def projects_page(log_in_success):
+    """Devuelve la página de Projects con sesión iniciada."""
+    return ProjectsPage(log_in_success.page)
+
 @pytest.fixture
-def create_projects(dashboard_page, page):
+def create_projects(projects_page,page):
     """
-    Fixture para crear N proyectos desde el dashboard.
-    Usa los Page Objects respectivos.
+    Fixture para crear N proyectos desde Projects.
+    Usa los Page Objects ya instanciados en projects_page.
     """
     def _create_projects(n=1):
-        logger.info(f"Creando {n} proyectos desde el Dashboard...")
+        logger.info(f"Creando {n} proyectos desde el Projects...")
 
-        dashboard = dashboard_page
-        projects = ProjectsPage(page)
+        projects = projects_page
         new_project = NewProjectPage(page)
         type_project = TypeProjectPage(page)
-        timeline = TimeLineProjectPage(page)
+        timeline_project = TimeLineProjectPage(page)
 
 
         created_projects = []
@@ -86,20 +91,50 @@ def create_projects(dashboard_page, page):
             project_description = f"Descripción del proyecto {i+1}"
             logger.info(f"Creando proyecto {i+1}: {project_name}")
 
-            # Paso 1: navegar a Projects → New Project → seleccionar Kanban
-            dashboard.go_to_projects()
+            # Paso 1: New Project → seleccionar Kanban
+            projects.go_to_projects()
             projects.click_new_project()
             type_project.select_kanban()
 
             # Paso 2: llenar el formulario y enviar
             new_project.fill_form(name=project_name, description=project_description)
             new_project.submit_form()
+            timeline_project.go_to_projects()
+            projects.wait_for_project(project_name)
 
             logger.info(f"Proyecto '{project_name}' creado correctamente")
             created_projects.append(project_name)
+
 
         logger.info(f"Todos los proyectos creados: {created_projects}")
         return created_projects
 
 
     return _create_projects
+
+
+# @pytest.fixture
+# def delete_all_projects(dashboard_page, page):
+#     """
+#     Fixture que devuelve una función para eliminar todos los proyectos visibles.
+#     """
+#     timeline = TimeLineProjectPage(page)
+#     projects = ProjectsPage(page)
+
+#     def _delete_all():
+#         # dashboard_page.go_to_projects()
+#         project_names = projects.get_project_names()
+
+#         for name in project_names:
+#             project_names = projects.get_project_names()
+#             projects.click_project(name)  
+#             timeline.delete_project(name)  
+#             timeline.confirm_delete()
+#             dashboard_page.go_to_projects()
+#             projects.click_view_all_projects()
+
+#         time.sleep(3)
+#         projects.first_proyect_option()
+#         logger.info("Se eliminaron todos los proyectos")
+
+#     return _delete_all

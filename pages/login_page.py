@@ -17,6 +17,7 @@ class LoginPage(BasePage):
 
     def login(self, username: str, password: str):
         """Llena los campos y hace clic en iniciar sesión."""
+        self.close_cookie_warning()
         self.fill(self.username_input, username)
         self.fill(self.password_input, password)
         self.click(self.login_button)

@@ -8,13 +8,10 @@ logger = setup_logger("test_dashboard.log", level=20)  # INFO
 class TimeLineProjectPage(BasePage):
     def __init__(self, page: Page):
         super().__init__(page)
-        self.dashboard_icon = "a.logo[title='Homepage']"
+        self.projects_button = "a.dropdown-project-list-projects[title='Projects']"
+        self.view_all_projects_option = 'a.see-more-projects-btn[tg-nav="projects"]' 
 
-    def go_to_dashboard(self):
-        """Hace clic en la icono de Dashboard"""
-        try:
-            self.page.locator(self.dashboard_icon).click()
-            logger.info("Se hizo clic en el logo para ir a Homepage")
-        except Exception as e:
-            logger.error(f"No se pudo ir a Homepage: {e}")
-            raise
+    def go_to_projects(self):
+        self.click(self.projects_button)
+        self.click(self.view_all_projects_option)
+

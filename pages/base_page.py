@@ -16,3 +16,8 @@ class BasePage:
 
     def is_visible(self, selector):
         return self.page.is_visible(selector)
+    
+    def close_cookie_warning(self):
+        cookie_close = self.page.locator("cookie-warning a.close")
+        if cookie_close.is_visible():
+            cookie_close.click()

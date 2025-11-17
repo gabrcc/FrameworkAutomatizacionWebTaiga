@@ -79,3 +79,14 @@ class ProjectsPage(BasePage):
             return locator.is_visible()
         except:
             return False
+        
+    def is_project_private(self, project_name: str) -> bool:
+        """
+        Verifica si un proyecto tiene el ícono 'private'.
+        Retorna True si es privado.
+        """
+        icon_locator = self.page.locator(
+            f"a.project-title[title='{project_name}'] >> xpath=following-sibling::*//svg[contains(@class,'icon-private')]"
+        )
+
+        return icon_locator.is_visible()

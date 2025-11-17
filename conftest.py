@@ -1,6 +1,7 @@
 import json
 import time
 import pytest
+from datetime import datetime
 from playwright.sync_api import sync_playwright
 from pages.login_page import LoginPage
 from pages.dashboard_page import DashboardPage
@@ -135,3 +136,50 @@ def delete_all_projects(projects_page, page):
         logger.info("Se eliminaron todos los proyectos")
 
     return _delete_all
+
+@pytest.fixture(scope="session")
+def project_creation_cases():
+    with open("data/tc_create_project.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+    
+@pytest.fixture
+def delete_project_by_name(projects_page, page):
+    """
+    Fixture que devuelve una función para eliminar un proyecto específico por nombre.
+    """
+    projects = projects_page
+    timeline = TimeLineProjectPage(page)
+
+    def _delete(name: str):
+        logger.info(f"Intentando eliminar el proyecto: {name}")
+
+        # 1. Ir a Projects
+        projects.go_to_projects()
+
+        # 2. Verificar si existe
+        project_list = projects.get_project_names()
+        if name not in project_list:
+            logger.warning(f"El proyecto '{name}' no existe, no se elimina.")
+            return False
+
+        # 3. Entrar al proyecto
+        projects.click_project(name)
+        logger.info(f"Entrando al proyecto '{name}' para eliminarlo.")
+
+        # 4. Eliminar
+        timeline.delete_project(name)
+        timeline.confirm_delete()
+        time.sleep(2)
+        logger.info(f"Proyecto '{name}' eliminado.")
+
+        # 5. Volver a Projects
+        projects.go_to_projects()
+
+        # 6. Validación final
+        remaining = projects.get_project_names()
+        assert name not in remaining, f"FALLO: El proyecto '{name}' no fue eliminado."
+
+        logger.info(f"Eliminación verificada para el proyecto '{name}'.")
+        return True
+
+    return _delete

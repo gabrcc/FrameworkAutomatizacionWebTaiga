@@ -1,0 +1,196 @@
+{
+  "valid_cases": [
+    {
+      "id": "CP01",
+      "title": "Crear proyecto con valores válidos",
+      "input": {
+        "name": "Proyecto_Valido",
+        "description": "Descripción válida para un proyecto estándar.",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "CP02",
+      "title": "Crear proyecto con nombre mínimo (1 char)",
+      "input": {
+        "name": "A",
+        "description": "Proyecto con nombre mínimo permitido.",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "CP03",
+      "title": "Crear proyecto con nombre máximo permitido (140 chars)",
+      "input": {
+        "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "description": "Texto válido.",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "CP04",
+      "title": "Crear proyecto privado con valores válidos",
+      "input": {
+        "name": "Proyecto_Privado",
+        "description": "Proyecto privado estándar.",
+        "privacy": "private"
+      },
+      "expected": "success"
+    }
+  ],
+
+  "boundary_cases": [
+    {
+      "id": "CP05",
+      "title": "Nombre con 0 caracteres",
+      "input": {
+        "name": "",
+        "description": "Descripción válida.",
+        "privacy": "public"
+      },
+      "expected": "error_required_field"
+    },
+    {
+      "id": "CP06",
+      "title": "Nombre con 256 caracteres (sobre el límite)",
+      "input": {
+        "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "description": "Descripción válida.",
+        "privacy": "public"
+      },
+      "expected": "error_max_length"
+    },
+    {
+      "id": "CP07",
+      "title": "Descripción con 0 caracteres",
+      "input": {
+        "name": "Proyecto_Sin_Descr",
+        "description": "",
+        "privacy": "public"
+      },
+      "expected": "error_required_field"
+    },
+    {
+      "id": "CP08",
+      "title": "Descripción con 2000 caracteres",
+      "input": {
+        "name": "Proyecto_Descr_Larga",
+        "description": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "privacy": "public"
+      },
+      "expected": "success"
+    }
+  ],
+
+  "invalid_cases": [
+    {
+      "id": "CP09",
+      "title": "Nombre con solo espacios",
+      "input": {
+        "name": "     ",
+        "description": "Descripción válida.",
+        "privacy": "public"
+      },
+      "expected": "error_required_field"
+    },
+    {
+      "id": "CP10",
+      "title": "Nombre con caracteres inválidos",
+      "input": {
+        "name": "@@@@@@@",
+        "description": "Texto.",
+        "privacy": "public"
+      },
+      "expected": "error_invalid_characters"
+    },
+    {
+      "id": "CP11",
+      "title": "Nombre duplicado",
+      "input": {
+        "name": "Proyecto_Valido",
+        "description": "Duplicado.",
+        "privacy": "public"
+      },
+      "expected": "error_name_exists"
+    },
+    {
+      "id": "CP12",
+      "title": "Descripcion con solo espacios",
+      "input": {
+        "name": "Descripcion espacios",
+        "description": "      ",
+        "privacy": "public"
+      },
+      "expected": "error_required_field"
+    }
+  ],
+
+  "privacy_cases": [
+    {
+      "id": "CP13",
+      "title": "Proyecto público",
+      "input": {
+        "name": "Proyecto_Publico",
+        "description": "Proyecto visible por todos.",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "CP14",
+      "title": "Proyecto privado",
+      "input": {
+        "name": "Proyecto_Privado_Caso",
+        "description": "Proyecto no visible públicamente.",
+        "privacy": "private"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "CP15",
+      "title": "Cambiar privacidad a mitad del proceso",
+      "input": {
+        "name": "Proyecto_Privacidad_Mix",
+        "description": "Test de cambio.",
+        "privacy": "toggle"
+      },
+      "expected": "success"
+    }
+  ],
+
+  "special_cases": [
+    {
+      "id": "CP16",
+      "title": "Crear proyecto con emojis",
+      "input": {
+        "name": "Proyecto😀🔥",
+        "description": "Descripción con emoji 🚀",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "CP17",
+      "title": "Crear proyecto con unicode extraño",
+      "input": {
+        "name": "プロジェクト123",
+        "description": "テスト",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "CP18",
+      "title": "Cancelacion en mitad del proceso",
+      "input": {
+        "name": "Creacion_Cancelada",
+        "description": "No se termina el proceso de creacion",
+        "privacy": "public"
+      },
+      "expected": "canceled_creation"
+    }
+  ]
+}

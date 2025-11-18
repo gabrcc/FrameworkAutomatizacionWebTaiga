@@ -42,7 +42,7 @@
     }
   ],
 
-  "boundary_cases": [
+  "length_cases": [
     {
       "id": "CP05",
       "title": "Nombre con 0 caracteres",
@@ -55,16 +55,6 @@
     },
     {
       "id": "CP06",
-      "title": "Nombre con 256 caracteres (sobre el límite)",
-      "input": {
-        "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "description": "Descripción válida.",
-        "privacy": "public"
-      },
-      "expected": "error_max_length"
-    },
-    {
-      "id": "CP07",
       "title": "Descripción con 0 caracteres",
       "input": {
         "name": "Proyecto_Sin_Descr",
@@ -74,20 +64,17 @@
       "expected": "error_required_field"
     },
     {
-      "id": "CP08",
-      "title": "Descripción con 2000 caracteres",
+      "id": "CP07",
+      "title": "No llenar nombre ni descripcion",
       "input": {
-        "name": "Proyecto_Descr_Larga",
-        "description": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "name": "",
+        "description": "",
         "privacy": "public"
       },
-      "expected": "success"
-    }
-  ],
-
-  "invalid_cases": [
+      "expected": "error_required_field"
+    },
     {
-      "id": "CP09",
+      "id": "CP08",
       "title": "Nombre con solo espacios",
       "input": {
         "name": "     ",
@@ -97,27 +84,7 @@
       "expected": "error_required_field"
     },
     {
-      "id": "CP10",
-      "title": "Nombre con caracteres inválidos",
-      "input": {
-        "name": "@@@@@@@",
-        "description": "Texto.",
-        "privacy": "public"
-      },
-      "expected": "error_invalid_characters"
-    },
-    {
-      "id": "CP11",
-      "title": "Nombre duplicado",
-      "input": {
-        "name": "Proyecto_Valido",
-        "description": "Duplicado.",
-        "privacy": "public"
-      },
-      "expected": "error_name_exists"
-    },
-    {
-      "id": "CP12",
+      "id": "CP09",
       "title": "Descripcion con solo espacios",
       "input": {
         "name": "Descripcion espacios",
@@ -125,6 +92,39 @@
         "privacy": "public"
       },
       "expected": "error_required_field"
+    },
+    {
+      "id": "CP10",
+      "title": "Nombre con 256 caracteres (sobre el límite)",
+      "input": {
+        "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "description": "Descripción válida.",
+        "privacy": "public"
+      },
+      "expected": "error_max_length"
+    }
+  ],
+
+  "name_cases": [
+    {
+      "id": "CP11",
+      "title": "Nombre duplicado",
+      "input": {
+        "name": "Proyecto_Caso_Duplicado",
+        "description": "Duplicado.",
+        "privacy": "public"
+      },
+      "expected": "error_name_exists"
+    },
+    {
+      "id": "CP12",
+      "title": "Nombre con caracteres inválidos",
+      "input": {
+        "name": "@@@@@@@",
+        "description": "Texto.",
+        "privacy": "public"
+      },
+      "expected": "error_invalid_characters"
     }
   ],
 
@@ -181,7 +181,10 @@
         "privacy": "public"
       },
       "expected": "success"
-    },
+    }
+  ],
+
+  "cancel_cases": [
     {
       "id": "CP18",
       "title": "Cancelacion en mitad del proceso",

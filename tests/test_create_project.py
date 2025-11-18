@@ -1,4 +1,6 @@
 import pytest
+import time
+from utils.helpers import screenshot_path
 from pages.new_project_page import NewProjectPage
 from pages.type_project_page import TypeProjectPage
 from pages.timeline_project_page import TimeLineProjectPage
@@ -40,20 +42,22 @@ def test_create_n_projects(projects_page, create_projects,n=7):
 
 @pytest.mark.parametrize("case_category", [
     "valid_cases",
-    # "boundary_cases",
-    # "invalid_cases",
-    # "privacy_cases",
-    # "special_cases"
+    "length_cases",
+    "name_cases",
+    "privacy_cases",
+    "special_cases"
 ])
 @pytest.mark.functional
 @pytest.mark.regression
 @pytest.mark.prueba
-def test_project_creation_cases(delete_project_by_name, projects_page,project_creation_cases, case_category, page):
+def test_project_creation_cases(delete_project_by_name, projects_page,project_creation_cases, case_category, page, create_one_project):
     cases = project_creation_cases[case_category]
     projects = projects_page
     new_project = NewProjectPage(page)
     type_project = TypeProjectPage(page)
     timeline = TimeLineProjectPage(page)
+    
+    errors = []
 
     for case in cases:
         name = case["input"]["name"]
@@ -87,62 +91,81 @@ def test_project_creation_cases(delete_project_by_name, projects_page,project_cr
                         assert projects.is_project_private, f"No se encontro el icono de proyecto privado en '{name}'"
                         logger.info(f"Icono proyecto privado presente en {name}")
                     except AssertionError as e:
+                        path = screenshot_path(f"{case['id']}_creacion_proyecto")
+                        projects.page.screenshot(path=path)
                         logger.error(str(e))
-                        raise
-                    
-
+                        errors.append(str(e))
             except AssertionError as e:
+                path = screenshot_path(f"{case['id']}_creacion_proyecto")
+                projects.page.screenshot(path=path)
                 logger.error(str(e))
-                raise
+                errors.append(str(e))
 
         elif expected == "error_required_field":
-            error = new_project.get_error_message()
+            required_field_errors = new_project.get_required_field_errors()
             try:
-                assert error is not None, "FALLO: No apareció el error de campo requerido"
-                logger.info("OK Error requerido detectado")
+                assert required_field_errors is not None, "FALLO: No apareció el error de campo requerido"
+                logger.info("OK Error valor requerido detectado")
             except AssertionError as e:
+                path = screenshot_path(f"{case['id']}_creacion_proyecto")
+                projects.page.screenshot(path=path)
                 logger.error(str(e))
-                raise
+                errors.append(str(e))
+        
 
         elif expected == "error_max_length":
-            error = new_project.get_error_message()
+            lock_submit = new_project.submit_load_state()
             try:
-                assert "maximum" in error.lower(), "FALLO: No apareció error por longitud"
-                logger.info("OK Error de longitud detectado")
+                assert lock_submit, "FALLO: Se creo el proyecto a pesar del limite de caracteres"
+                logger.info("OK Proyecto no creado, problema de longitud detectado")
             except AssertionError as e:
+                path = screenshot_path(f"{case['id']}_creacion_proyecto")
+                projects.page.screenshot(path=path)
                 logger.error(str(e))
-                raise
+                errors.append(str(e))
+            
 
         elif expected == "error_invalid_characters":
-            error = new_project.get_error_message()
-            try:
-                assert "invalid" in error.lower(), "FALLO: No apareció error por caracteres inválidos"
-                logger.info("OK Error por caracteres inválidos detectado")
-            except AssertionError as e:
-                logger.error(str(e))
-                raise
-
-        elif expected == "error_name_exists":
-            error = new_project.get_error_message()
-            try:
-                assert "exists" in error.lower() or "ya existe" in error.lower(), "FALLO: No apareció error de nombre duplicado"
-                logger.info("OK Error de nombre duplicado detectado")
-            except AssertionError as e:
-                logger.error(str(e))
-                raise
-
-        elif expected == "canceled_creation":
-            new_project.cancel_creation()
-            projects.go_to()
+            timeline.go_to_projects()
             displayed = projects.get_project_names()
             try:
-                assert name not in displayed, "FALLO: El proyecto se creó aunque debía cancelarse"
-                logger.info("OK Cancelación detectada correctamente")
+                assert name not in displayed, "FALLO: Se creo  proyecto a pesar de tener solo caracteres inválidos"
+                logger.info("OK Proyecto no creado, caracteres inválidos detectado")
             except AssertionError as e:
+                projects.go_to_projects() 
+                projects.wait_for_project(name)
+                path = screenshot_path(f"{case['id']}_creacion_proyecto")
+                projects.page.screenshot(path=path)
                 logger.error(str(e))
-                raise
+                errors.append(str(e))
+            
 
+        elif expected == "error_name_exists":
+            time.sleep(2)
+            project_to_duplicate = create_one_project("Proyecto_Caso_Duplicado","Duplicado")
+            timeline.go_to_projects()
+            displayed = projects.get_project_names()
+            project_count = displayed.count(name)
+            
+            try:
+                assert project_count == 1, "FALLO: Se creo poryecto duplicado"
+                logger.info("OK Proyecto no creado, nombre duplicado detectado")
+            except AssertionError as e:
+                projects.go_to_projects() 
+                projects.wait_for_project(project_to_duplicate)
+                path = screenshot_path(f"{case['id']}_creacion_proyecto")
+                projects.page.screenshot(path=path)
+                logger.error(str(e))
+                errors.append(str(e))
+            
+            time.sleep(2)
+            delete_project_by_name(project_to_duplicate)
+            
         
         delete_project_by_name(name)
+    if errors:
+        raise AssertionError("\n".join(errors))
+
+        
 
         

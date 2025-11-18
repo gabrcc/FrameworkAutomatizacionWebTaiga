@@ -1,6 +1,8 @@
 from pages.base_page import BasePage
 from playwright.sync_api import Page
 from utils.logger import setup_logger
+from playwright.sync_api import expect
+import re
 
 logger = setup_logger("test_dashboard.log", level=20)  # INFO
 
@@ -44,8 +46,11 @@ class NewProjectPage(BasePage):
                 self.private_label.click()
                 logger.info("Privacidad seleccionada: PRIVATE")
             elif privacy == "toggle":
+                logger.info("Click en PUBLIC")
                 self.public_label.click()
+                logger.info("Click en PRIVATE")
                 self.private_label.click()
+                logger.info("Click en PUBLIC")
                 self.public_label.click()
                 logger.info("Privacidad alternada (toggle realizado)")
             else:
@@ -53,3 +58,31 @@ class NewProjectPage(BasePage):
         except Exception as e:
             logger.error(f"Error al seleccionar privacidad: {e}")
             raise
+
+    def get_required_field_errors(self):
+        """Devuelve lista de todos los mensajes 'This value is required.' visibles."""
+        errors = self.page.locator("div.error-text:has-text('This value is required.')")
+        count = errors.count()
+        messages = []
+        for i in range(count):
+            messages.append(errors.nth(i).inner_text().strip())
+        return messages
+    
+    def submit_load_state(self):
+        """
+        Verifica que el botón entró en estado 'loading'
+        (caso esperado cuando el nombre excede el límite o hay error).
+        """
+        try:
+            # 1. El botón debe tener la clase loading
+            expect(self.submit_button).to_have_class(re.compile("loading"))
+
+            # 2. Debe existir el spinner
+            spinner = self.submit_button.locator("img.loading-spinner")
+            expect(spinner).to_be_visible()
+
+            logger.info("OK -> El botón entró en estado LOADING correctamente.")
+            return True
+        except Exception as e:
+            logger.error(f"ERROR -> El botón NO entró en estado loading. {e}")
+            return False

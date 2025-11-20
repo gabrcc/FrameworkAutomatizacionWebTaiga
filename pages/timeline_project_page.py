@@ -14,7 +14,8 @@ class TimeLineProjectPage(BasePage):
         self.delete_project_link = page.locator("a.delete-project[title='Delete this project']")
         self.close_cookie_btn = page.locator("cookie-warning a.close")
         self.confirm_delete_button = page.locator("button.btn-confirm.js-confirm",has_text="Yes, I'm really sure")
-        
+        self.cancel_delete_button = page.get_by_role("button", name="Cancel")
+
     def go_to_projects(self):
         self.click(self.projects_button)
         self.click(self.view_all_projects_option)
@@ -41,4 +42,22 @@ class TimeLineProjectPage(BasePage):
             logger.info("Confirmar eliminar de proyecto")
         except Exception as e:
             logger.error(f"No se pudo confirmar la eliminación del proyecto: {e}")
+            raise
+
+    def cancel_delete(self):
+        try:
+            # Espera a que el modal de eliminación esté visible
+            self.page.locator("div.lightbox-delete-project.open").wait_for(
+                state="visible", timeout=8000
+            )
+
+            # Localiza el botón cancel dentro del modal
+            cancel_btn = self.page.locator("div.lightbox-delete-project.open button.js-cancel")
+
+            cancel_btn.wait_for(state="visible", timeout=5000)
+            cancel_btn.click()
+
+            logger.info("Cancelación de eliminación ejecutada correctamente")
+        except Exception as e:
+            logger.error(f"No se pudo cancelar la eliminación del proyecto: {e}")
             raise

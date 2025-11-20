@@ -1,7 +1,7 @@
 {
   "valid_cases": [
     {
-      "id": "CP01",
+      "id": "create_proy_01",
       "title": "Crear proyecto con valores válidos",
       "input": {
         "name": "Proyecto_Valido",
@@ -11,7 +11,7 @@
       "expected": "success"
     },
     {
-      "id": "CP02",
+      "id": "create_proy_02",
       "title": "Crear proyecto con nombre mínimo (1 char)",
       "input": {
         "name": "A",
@@ -21,7 +21,7 @@
       "expected": "success"
     },
     {
-      "id": "CP03",
+      "id": "create_proy_03",
       "title": "Crear proyecto con nombre máximo permitido (140 chars)",
       "input": {
         "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -31,7 +31,7 @@
       "expected": "success"
     },
     {
-      "id": "CP04",
+      "id": "create_proy_04",
       "title": "Crear proyecto privado con valores válidos",
       "input": {
         "name": "Proyecto_Privado",
@@ -44,7 +44,7 @@
 
   "length_cases": [
     {
-      "id": "CP05",
+      "id": "create_proy_05",
       "title": "Nombre con 0 caracteres",
       "input": {
         "name": "",
@@ -54,7 +54,7 @@
       "expected": "error_required_field"
     },
     {
-      "id": "CP06",
+      "id": "create_proy_06",
       "title": "Descripción con 0 caracteres",
       "input": {
         "name": "Proyecto_Sin_Descr",
@@ -64,7 +64,7 @@
       "expected": "error_required_field"
     },
     {
-      "id": "CP07",
+      "id": "create_proy_07",
       "title": "No llenar nombre ni descripcion",
       "input": {
         "name": "",
@@ -74,7 +74,7 @@
       "expected": "error_required_field"
     },
     {
-      "id": "CP08",
+      "id": "create_proy_08",
       "title": "Nombre con solo espacios",
       "input": {
         "name": "     ",
@@ -84,7 +84,7 @@
       "expected": "error_required_field"
     },
     {
-      "id": "CP09",
+      "id": "create_proy_09",
       "title": "Descripcion con solo espacios",
       "input": {
         "name": "Descripcion espacios",
@@ -94,7 +94,7 @@
       "expected": "error_required_field"
     },
     {
-      "id": "CP10",
+      "id": "create_proy_10",
       "title": "Nombre con 256 caracteres (sobre el límite)",
       "input": {
         "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -107,7 +107,7 @@
 
   "name_cases": [
     {
-      "id": "CP11",
+      "id": "create_proy_11",
       "title": "Nombre duplicado",
       "input": {
         "name": "Proyecto_Caso_Duplicado",
@@ -117,7 +117,7 @@
       "expected": "error_name_exists"
     },
     {
-      "id": "CP12",
+      "id": "create_proy_12",
       "title": "Nombre con caracteres inválidos",
       "input": {
         "name": "@@@@@@@",
@@ -130,7 +130,7 @@
 
   "privacy_cases": [
     {
-      "id": "CP13",
+      "id": "create_proy_13",
       "title": "Proyecto público",
       "input": {
         "name": "Proyecto_Publico",
@@ -140,7 +140,7 @@
       "expected": "success"
     },
     {
-      "id": "CP14",
+      "id": "create_proy_14",
       "title": "Proyecto privado",
       "input": {
         "name": "Proyecto_Privado_Caso",
@@ -150,7 +150,7 @@
       "expected": "success"
     },
     {
-      "id": "CP15",
+      "id": "create_proy_15",
       "title": "Cambiar privacidad a mitad del proceso",
       "input": {
         "name": "Proyecto_Privacidad_Mix",
@@ -163,7 +163,7 @@
 
   "special_cases": [
     {
-      "id": "CP16",
+      "id": "create_proy_16",
       "title": "Crear proyecto con emojis",
       "input": {
         "name": "Proyecto😀🔥",
@@ -173,7 +173,7 @@
       "expected": "success"
     },
     {
-      "id": "CP17",
+      "id": "create_proy_17",
       "title": "Crear proyecto con unicode extraño",
       "input": {
         "name": "プロジェクト123",
@@ -186,7 +186,7 @@
 
   "cancel_cases": [
     {
-      "id": "CP18",
+      "id": "create_proy_18",
       "title": "Cancelacion en mitad del proceso",
       "input": {
         "name": "Creacion_Cancelada",

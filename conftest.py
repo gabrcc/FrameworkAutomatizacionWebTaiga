@@ -127,7 +127,7 @@ def delete_all_projects(projects_page, page):
         for name in project_names:
             projects.click_project(name)  
             timeline.delete_project(name)  
-            timeline.confirm_delete()
+            timeline.confirm_delete(name)
             time.sleep(2)
             projects.go_to_projects()
 
@@ -168,7 +168,7 @@ def delete_project_by_name(projects_page, page):
 
         # 4. Eliminar
         timeline.delete_project(name)
-        timeline.confirm_delete()
+        timeline.confirm_delete(name)
         time.sleep(2)
         logger.info(f"Proyecto '{name}' eliminado.")
 
@@ -204,3 +204,11 @@ def create_one_project(projects_page, page):
         return name  # opcional
 
     return _create_one_project
+
+# @pytest.fixture(scope="session")
+# def flattened_cases(project_creation_cases):
+#     flat = []
+#     for category, cases in project_creation_cases.items():
+#         for case in cases:
+#             flat.append((category, case))
+#     return flat

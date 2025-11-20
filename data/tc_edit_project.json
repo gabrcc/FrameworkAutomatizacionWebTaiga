@@ -1,0 +1,96 @@
+{
+  "edit_name": [
+    {
+      "id": "edit_proy_01",
+      "title": "Cambiar nombre válido",
+      "input": {
+        "name": "Proyecto Editado",
+        "description": "Descripción actualizada",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "edit_proy_02",
+      "title": "Nombre vacío",
+      "input": {
+        "name": "",
+        "description": "Nueva descripción",
+        "privacy": "public"
+      },
+      "expected": "error_required_field"
+    },
+    {
+      "id": "edit_proy_03",
+      "title": "Nombre de espacios",
+      "input": {
+        "name": "    ",
+        "description": "Nueva descripción",
+        "privacy": "public"
+      },
+      "expected": "error_required_field"
+    },
+    {
+      "id": "edit_proy_04",
+      "title": "Nombre con caracteres inválidos",
+      "input": {
+        "name": "@@@@@",
+        "description": "Descripción válida",
+        "privacy": "public"
+      },
+      "expected": "error_invalid_characters"
+    }
+  ],
+  "edit_description": [ 
+    {
+      "id": "edit_proy_05",
+      "title": "Descripción vacia",
+      "input": {
+        "name": "Proyecto Límite",
+        "description": "",
+        "privacy": "public"
+      },
+      "expected": "error_required_field"
+    },
+     {
+      "id": "edit_proy_06",
+      "title": "Descripción de espacios",
+      "input": {
+        "name": "Proyecto Límite",
+        "description": "      ",
+        "privacy": "public"
+      },
+      "expected": "error_required_field"
+    }, 
+    {
+      "id": "edit_proy_07",
+      "title": "Cambiar descripcion válida",
+      "input": {
+        "name": "Proyecto Editado",
+        "description": "Descripción actualizada",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "edit_proy_08",
+      "title": "Nombre y descripcion vacio y espacios",
+      "input": {
+        "name": "",
+        "description": "   ",
+        "privacy": "public"
+      },
+      "expected": "success"
+    },
+    {
+      "id": "edit_proy_09",
+      "title": "Cambiar descripcion otro idioma",
+      "input": {
+        "name": "Proyecto Editado",
+        "description": "プロジェクト123",
+        "privacy": "public"
+      },
+      "expected": "success"
+    }
+  ]
+}

@@ -57,7 +57,6 @@ def test_create_n_projects(projects_page, create_projects,n=7):
 
 @pytest.mark.functional
 @pytest.mark.regression
-@pytest.mark.prueba
 @pytest.mark.parametrize("category, case", flattened_cases)
 def test_project_creation_cases(delete_project_by_name, projects_page, page, create_one_project, category, case):
     projects = projects_page
@@ -73,8 +72,10 @@ def test_project_creation_cases(delete_project_by_name, projects_page, page, cre
     print(f"Ejecutando {case['id']} - {case['title']}")
 
     # Marcar ciertos casos como xfail
-    if expected in ["error_name_exists", "error_invalid_characters"]:
-        pytest.xfail(f"Se espera fallo: {case['id']} - {case['title']}")
+    # if expected in ["error_name_exists", "error_invalid_characters"]:
+    #     pytest.xfail(f"Se espera fallo: {case['id']} - {case['title']}")
+    is_xfail = expected in ["error_name_exists", "error_invalid_characters"]
+
 
     # Paso 1: New Project → seleccionar Kanban
     projects.go_to_projects()
@@ -130,254 +131,14 @@ def test_project_creation_cases(delete_project_by_name, projects_page, page, cre
         path = screenshot_path(f"{case['id']}_creacion_proyecto")
         projects.page.screenshot(path=path)
         logger.error(str(e))
-        raise
+        # Si era XFAIL, lo marcamos aquí
+        if is_xfail:
+            pytest.xfail(f"Se esperaba fallo: {case['id']} - {case['title']}")
+        else:
+            raise
+
 
     finally:
         # Eliminar proyecto creado si existe
         delete_project_by_name(name)
-# @pytest.mark.parametrize("category, case", flattened_cases)
-# def test_project_creation_cases(delete_project_by_name, projects_page, page, create_one_project, category, case):
-# # def test_project_creation_cases(delete_project_by_name, projects_page,project_creation_cases, case_category, page, create_one_project):
-#     # cases = project_creation_cases[case_category]
-#     projects = projects_page
-#     new_project = NewProjectPage(page)
-#     type_project = TypeProjectPage(page)
-#     timeline = TimeLineProjectPage(page)
-    
-#     # errors = []
 
-#     name = case["input"]["name"]
-#     description = case["input"]["description"]
-#     privacy = case["input"]["privacy"]
-#     expected = case["expected"]
-
-#     print(f"Ejecutando {case['id']} - {case['title']}")
-
-#     # Paso 1: New Project → seleccionar Kanban
-#     projects.go_to_projects()
-#     projects.click_new_project()
-#     type_project.select_kanban()
-
-#     # # Paso 2: llenar el formulario y enviar
-#     new_project.fill_form(name, description)
-#     new_project.set_privacy(privacy)
-#     new_project.submit_form()
-
-#         # Validar según lo esperado
-#     if expected == "success":
-#         timeline.go_to_projects()
-#         projects.wait_for_project(name)
-#         displayed = projects.get_project_names()
-#         try:
-#             assert name in displayed, f"FALLO: El Proyecto '{name}' no fue creado"
-#             logger.info(f"OK Proyecto creado: {name}")
-
-#             if privacy == "private":
-#                 try:
-#                     assert projects.is_project_private, f"No se encontro el icono de proyecto privado en '{name}'"
-#                     logger.info(f"Icono proyecto privado presente en {name}")
-#                 except AssertionError as e:
-#                     path = screenshot_path(f"{case['id']}_creacion_proyecto")
-#                     projects.page.screenshot(path=path)
-#                     logger.error(str(e))
-#                     # errors.append(str(e))
-#         except AssertionError as e:
-#             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-#             projects.page.screenshot(path=path)
-#             logger.error(str(e))
-#             # errors.append(str(e))
-
-#     elif expected == "error_required_field":
-#         required_field_errors = new_project.get_required_field_errors()
-#         try:
-#             assert required_field_errors is not None, "FALLO: No apareció el error de campo requerido"
-#             logger.info("OK Error valor requerido detectado")
-#         except AssertionError as e:
-#             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-#             projects.page.screenshot(path=path)
-#             logger.error(str(e))
-#             # errors.append(str(e))
-    
-
-#     elif expected == "error_max_length":
-#         lock_submit = new_project.submit_load_state()
-#         try:
-#             assert lock_submit, "FALLO: Se creo el proyecto a pesar del limite de caracteres"
-#             logger.info("OK Proyecto no creado, problema de longitud detectado")
-#         except AssertionError as e:
-#             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-#             projects.page.screenshot(path=path)
-#             logger.error(str(e))
-#             # errors.append(str(e))
-        
-
-#     elif expected == "error_invalid_characters":
-#         timeline.go_to_projects()
-#         displayed = projects.get_project_names()
-#         try:
-#             assert name not in displayed, "FALLO: Se creo  proyecto a pesar de tener solo caracteres inválidos"
-#             logger.info("OK Proyecto no creado, caracteres inválidos detectado")
-#         except AssertionError as e:
-#             projects.go_to_projects() 
-#             projects.wait_for_project(name)
-#             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-#             projects.page.screenshot(path=path)
-#             logger.error(str(e))
-#             # errors.append(str(e))
-        
-
-#     elif expected == "error_name_exists":
-#         time.sleep(2)
-#         project_to_duplicate = create_one_project("Proyecto_Caso_Duplicado","Duplicado")
-#         timeline.go_to_projects()
-#         displayed = projects.get_project_names()
-#         project_count = displayed.count(name)
-        
-#         try:
-#             assert project_count == 1, "FALLO: Se creo proyecto duplicado"
-#             logger.info("OK Proyecto no creado, nombre duplicado detectado")
-#         except AssertionError as e:
-#             projects.go_to_projects() 
-#             projects.wait_for_project(project_to_duplicate)
-#             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-#             projects.page.screenshot(path=path)
-#             logger.error(str(e))
-#             # errors.append(str(e))
-        
-#         time.sleep(2)
-#         delete_project_by_name(project_to_duplicate)
-        
-    
-#     delete_project_by_name(name)
-    # if errors:
-    #     raise AssertionError("\n".join(errors))
-
-        # ------------------------------------------------------------------------------------------------------------
-
-        
-# @pytest.mark.parametrize("case_category", [
-#     "valid_cases",
-#     "length_cases",
-#     "name_cases",
-#     "privacy_cases",
-#     "special_cases"
-# ])
-    #     # def test_project_creation_cases(delete_project_by_name, projects_page,project_creation_cases, case_category, page, create_one_project):
-    # # cases = project_creation_cases[case_category]
-    # projects = projects_page
-    # new_project = NewProjectPage(page)
-    # type_project = TypeProjectPage(page)
-    # timeline = TimeLineProjectPage(page)
-    
-    # errors = []
-
-    # for case in cases:
-    #     name = case["input"]["name"]
-    #     description = case["input"]["description"]
-    #     privacy = case["input"]["privacy"]
-    #     expected = case["expected"]
-
-    #     print(f"▶ Ejecutando {case['id']} - {case['title']}")
-
-    #     # # Paso 1: New Project → seleccionar Kanban
-    #     projects.go_to_projects()
-    #     projects.click_new_project()
-    #     type_project.select_kanban()
-
-    #     # # Paso 2: llenar el formulario y enviar
-    #     new_project.fill_form(name, description)
-    #     new_project.set_privacy(privacy)
-    #     new_project.submit_form()
-
-    #     # Validar según lo esperado
-    #     if expected == "success":
-    #         timeline.go_to_projects()
-    #         projects.wait_for_project(name)
-    #         displayed = projects.get_project_names()
-    #         try:
-    #             assert name in displayed, f"FALLO: El Proyecto '{name}' no fue creado"
-    #             logger.info(f"OK Proyecto creado: {name}")
-
-    #             if privacy == "private":
-    #                 try:
-    #                     assert projects.is_project_private, f"No se encontro el icono de proyecto privado en '{name}'"
-    #                     logger.info(f"Icono proyecto privado presente en {name}")
-    #                 except AssertionError as e:
-    #                     path = screenshot_path(f"{case['id']}_creacion_proyecto")
-    #                     projects.page.screenshot(path=path)
-    #                     logger.error(str(e))
-    #                     errors.append(str(e))
-    #         except AssertionError as e:
-    #             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-    #             projects.page.screenshot(path=path)
-    #             logger.error(str(e))
-    #             errors.append(str(e))
-
-    #     elif expected == "error_required_field":
-    #         required_field_errors = new_project.get_required_field_errors()
-    #         try:
-    #             assert required_field_errors is not None, "FALLO: No apareció el error de campo requerido"
-    #             logger.info("OK Error valor requerido detectado")
-    #         except AssertionError as e:
-    #             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-    #             projects.page.screenshot(path=path)
-    #             logger.error(str(e))
-    #             errors.append(str(e))
-        
-
-    #     elif expected == "error_max_length":
-    #         lock_submit = new_project.submit_load_state()
-    #         try:
-    #             assert lock_submit, "FALLO: Se creo el proyecto a pesar del limite de caracteres"
-    #             logger.info("OK Proyecto no creado, problema de longitud detectado")
-    #         except AssertionError as e:
-    #             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-    #             projects.page.screenshot(path=path)
-    #             logger.error(str(e))
-    #             errors.append(str(e))
-            
-
-    #     elif expected == "error_invalid_characters":
-    #         timeline.go_to_projects()
-    #         displayed = projects.get_project_names()
-    #         try:
-    #             assert name not in displayed, "FALLO: Se creo  proyecto a pesar de tener solo caracteres inválidos"
-    #             logger.info("OK Proyecto no creado, caracteres inválidos detectado")
-    #         except AssertionError as e:
-    #             projects.go_to_projects() 
-    #             projects.wait_for_project(name)
-    #             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-    #             projects.page.screenshot(path=path)
-    #             logger.error(str(e))
-    #             errors.append(str(e))
-            
-
-    #     elif expected == "error_name_exists":
-    #         time.sleep(2)
-    #         project_to_duplicate = create_one_project("Proyecto_Caso_Duplicado","Duplicado")
-    #         timeline.go_to_projects()
-    #         displayed = projects.get_project_names()
-    #         project_count = displayed.count(name)
-            
-    #         try:
-    #             assert project_count == 1, "FALLO: Se creo poryecto duplicado"
-    #             logger.info("OK Proyecto no creado, nombre duplicado detectado")
-    #         except AssertionError as e:
-    #             projects.go_to_projects() 
-    #             projects.wait_for_project(project_to_duplicate)
-    #             path = screenshot_path(f"{case['id']}_creacion_proyecto")
-    #             projects.page.screenshot(path=path)
-    #             logger.error(str(e))
-    #             errors.append(str(e))
-            
-    #         time.sleep(2)
-    #         delete_project_by_name(project_to_duplicate)
-            
-        
-    #     delete_project_by_name(name)
-    # if errors:
-    #     raise AssertionError("\n".join(errors))
-
-        
-
-        

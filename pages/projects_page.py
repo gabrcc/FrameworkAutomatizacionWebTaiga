@@ -5,7 +5,7 @@ from playwright.sync_api import expect
 import time
 
 
-logger = setup_logger("test_dashboard.log", level=20)  # INFO
+logger = setup_logger("projects_page.log", level=20)  # INFO
 
 class ProjectsPage(BasePage):
     def __init__(self, page: Page):

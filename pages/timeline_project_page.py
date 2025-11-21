@@ -2,8 +2,9 @@ from pages.base_page import BasePage
 from playwright.sync_api import Page
 from utils.logger import setup_logger
 from playwright.sync_api import expect
+import time
 
-logger = setup_logger("test_dashboard.log", level=20)  # INFO
+logger = setup_logger("timeline_project.log", level=20)  # INFO
 
 
 class TimeLineProjectPage(BasePage):
@@ -19,8 +20,8 @@ class TimeLineProjectPage(BasePage):
         self.edit_name_input = page.locator("input#project-name")
         self.edit_description_input = page.locator("textarea#project-description")
         self.save_button = page.locator("button[title='Save']")
-        self.public_label = page.locator("input#private-project")
-        self.private_label = page.locator("input#public-project")
+        self.public_label = page.locator("label[for='public-project']")
+        self.private_label = page.locator("label[for='private-project']")
         self.success_notification_msg = page.locator("div.notification-message-success")
         self.project_info = page.locator("h1 .project-link .project-name")
         self.private_icon = page.locator("svg.icon-private")
@@ -29,14 +30,26 @@ class TimeLineProjectPage(BasePage):
         self.click(self.projects_button)
         self.click(self.view_all_projects_option)
 
+    def open_settings(self):
+        if self.close_cookie_btn.is_visible():
+            self.close_cookie_warning()
+        try:
+            self.settings_link.wait_for(state="visible", timeout=10000)
+            self.settings_link.click()
+            logger.info("Click en settings")
+        except Exception as e:
+            logger.error(f"No se pudo abrir settings': {e}")
+            raise
+
     def delete_project(self, project_name: str):
         """Elimina un proyecto por su nombre desde la lista de Projects"""
         if self.close_cookie_btn.is_visible():
             self.close_cookie_warning()
             
         try:
-            self.settings_link.wait_for(state="visible", timeout=10000)
-            self.settings_link.click()
+            # self.settings_link.wait_for(state="visible", timeout=10000)
+            # self.settings_link.click()
+            self.open_settings()
             self.delete_project_link.wait_for(state="visible", timeout=10000)
             self.delete_project_link.click()
             logger.info(f"Click en boton delete del proyecto {project_name}")
@@ -145,17 +158,18 @@ class TimeLineProjectPage(BasePage):
         """Click en el icono del proyecto para ver su info"""
         try:
             self.project_info.click()
+            logger.info("Click en el icono del proyecto para ver su info")
         except Exception as e:
             logger.error(f"No se pudo acceder a la info del proyecto: {e}")
             raise
     
     def is_project_private(self) -> bool:
         """
-        Verifica si un proyecto tiene el ícono 'private'.
-        Retorna True si es privado.
+        Retorna True si el proyecto tiene el ícono de privado visible.
         """
         try:
-            return self.private_icon.is_visible(timeout=3000)
+            # Espera a que el ícono aparezca o desaparezca
+            return self.private_icon.is_visible(timeout=5000)
         except:
             return False
         
@@ -169,3 +183,21 @@ class TimeLineProjectPage(BasePage):
             messages.append(errors.nth(i).inner_text().strip())
 
         return messages
+    
+    def change_privacy(self, privacy: str):
+        """Define privacy: public, private o toggle."""
+        self.open_settings()
+        try:
+
+            if privacy == "public":
+                self.public_label.click()
+                logger.info("Privacidad -> PUBLIC")
+
+            elif privacy == "private":
+                self.private_label.click()
+                logger.info("Privacidad -> PRIVATE")
+
+        except Exception as e:
+            logger.error(f"Error cambiando privacidad: {e}")
+            raise
+

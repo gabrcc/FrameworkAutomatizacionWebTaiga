@@ -4,7 +4,7 @@ from utils.logger import setup_logger
 from playwright.sync_api import expect
 import re
 
-logger = setup_logger("test_dashboard.log", level=20)  # INFO
+logger = setup_logger("new_project.log", level=20)  # INFO
 
 
 class NewProjectPage(BasePage):

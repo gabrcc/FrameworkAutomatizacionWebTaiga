@@ -2,7 +2,7 @@ from pages.base_page import BasePage
 from playwright.sync_api import Page
 from utils.logger import setup_logger
 
-logger = setup_logger("test_dashboard.log", level=20)  # INFO
+logger = setup_logger("type_project.log", level=20)  # INFO
 
 
 class TypeProjectPage(BasePage):

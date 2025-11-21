@@ -128,6 +128,7 @@ def test_project_creation_cases(delete_project_by_name, projects_page, page, cre
             delete_project_by_name(project_to_duplicate)
 
     except AssertionError as e:
+        page.wait_for_timeout(2000)
         path = screenshot_path(f"{case['id']}_creacion_proyecto")
         projects.page.screenshot(path=path)
         logger.error(str(e))

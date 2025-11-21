@@ -23,7 +23,6 @@ for category, cases in edit_project_cases.items():
 
 @pytest.mark.functional
 @pytest.mark.regression
-@pytest.mark.prueba
 @pytest.mark.parametrize("category, case", flattened_cases)
 def test_edit_project_cases(projects_page, page, create_one_project, category, case, delete_project_by_name):
     projects = projects_page
@@ -84,3 +83,34 @@ def test_edit_project_cases(projects_page, page, create_one_project, category, c
     finally:
         delete_project_by_name(base_name)
         delete_project_by_name(new_name)
+
+@pytest.mark.functional
+@pytest.mark.regression
+def test_change_privacy(delete_project_by_name, projects_page, create_one_project):
+    timeline = TimeLineProjectPage(projects_page.page)
+    
+    project_name = "Privacy test"
+    create_one_project(project_name, "Descripción inicial")
+    projects = projects_page
+    try:
+        #ESCENARIO PUBLIC -> PRIVATE
+        timeline.change_privacy("private")
+        timeline.save_changes()
+        time.sleep(1)
+        assert timeline.success_notification()
+        timeline.go_to_projects()
+        projects.is_project_private(project_name)
+
+        # #ESCENARIO PRIVATE -> PUBLIC
+        projects.click_project(project_name)
+        timeline.change_privacy("public")
+        timeline.save_changes()
+        time.sleep(1)
+        assert timeline.success_notification()
+        timeline.go_to_projects()
+        assert not projects.is_project_private(project_name)
+
+    finally:
+        delete_project_by_name(project_name)
+
+
